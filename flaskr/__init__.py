@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, abort, jsonify
+from flask import Flask, request, abort, jsonify 
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 import random
@@ -8,7 +8,12 @@ from models import setup_db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+
+  #     '''
 def create_app(test_config=None):
+      
+      
+      
       
           
       # create and configure the app
@@ -24,9 +29,19 @@ def create_app(test_config=None):
   # @TODO: Use the after_request decorator to set Access-Control-Allow
   # '''
       
+            # here I am gonna implment pagination function for myself in order to call it  somewhere again and again
+      def pagination(request,selection):
+
+                  page=request.args.get('page',1,type=int)
+                  start=(page-1)*QUESTIONS_PER_PAGE 
+                  end= start +QUESTIONS_PER_PAGE
+                  questions=[question.format() for question in selection]
+                  current_Q=questions[start:end]
+                  return current_Q
         
       @app.after_request
       def after_request(response):
+            
             
             response.headers.add('Acess-Control-Allow-Headers' , 'Content-type' , 'Authorization')
             response.headers.add('Acess-Control-Allow-Methods' , 'GET,POST,DELETE,OPTIONS')
@@ -34,17 +49,6 @@ def create_app(test_config=None):
 
 
 
-
-        # here I am gonna implment pagination function for myself in order to call it  somewhere again and again
-      def pagination(request,selection):
-
-            page=request.args.get('page',1,type=int)
-            start=(page-1)*QUESTIONS_PER_PAGE 
-            end= start +QUESTIONS_PER_PAGE
-            questions=[question.format() for question in selection]
-            current_Q=questions[start:end]
-            return current_Q
-  #     '''
   # @TODO: 
   # Create an endpoint to handle GET requests 
   # for all available categories.
@@ -98,7 +102,7 @@ def create_app(test_config=None):
   # ten questions per page and pagination at the bottom of the screen for three pages.
   # Clicking on the page numbers should update the questions. 
   # QUESTIONS_PER_PAGE =10
-  # '''
+# '''
       @app.route('/questions')
       def get_paginated_question():
             selection = Question.query.order_by(Question.id).all()
@@ -118,15 +122,6 @@ def create_app(test_config=None):
               'total_Categories':len(Category.query.all()),
               'current_Categories' : formatted_catg
             })
-
-    # '''
-    # @TODO: 
-    # Create an endpoint to DELETE question using a question ID. 
-
-    # TEST: When you click the trash icon next to a question, the question will be removed.
-    # This removal will persist in the database and when you refresh the page. 
-    # '''
-          
       @app.route('/questions/<int:question_id>',methods=['DELETE'])
       def DELETE_Q(question_id):
             
@@ -295,33 +290,32 @@ def create_app(test_config=None):
             
             except:
               
-              abort(422)      
+              abort(422)     
                   
   # '''
   # @TODO: 
   # Create error handlers for all expected errors 
   # including 404 and 422. 
-  # '''
-    
-  @app.errorhandler(404)
+  # # '''
+      
+      @app.errorhandler(404)
+      def not_found(error):  
+            return jsonify({
+                "success": False, 
+                "error": 404,
+                "message": " Resource is Not found"
+                }), 404
+        
+      @app.errorhandler(422)
+      def unprocessable(error):
+            
+            
+            return jsonify({
+                "success": False, 
+                "error": 422,
+                "message": "We are not able to process the request"
+                }), 422
 
-  def not_found(error):
-          
-    
-        return jsonify({
-            "success": False, 
-            "error": 404,
-            "message": " Resource is Not found"
-            }), 404
-    
-  @app.errorhandler(422)
-  def unprocessable(error):
-        return jsonify({
-            "success": False, 
-            "error": 422,
-            "message": "We are not able to process the request"
-            }), 422
+      return app
 
-  return app
-
-    
+      
