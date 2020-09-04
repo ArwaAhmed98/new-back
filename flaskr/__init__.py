@@ -12,7 +12,7 @@ QUESTIONS_PER_PAGE = 10
   #     '''
 def create_app(test_config=None):
       
-      
+      #any changes to commit again
       
       
           
@@ -43,8 +43,8 @@ def create_app(test_config=None):
       def after_request(response):
             
             
-            response.headers.add('Acess-Control-Allow-Headers' , 'Content-type' , 'Authorization')
-            response.headers.add('Acess-Control-Allow-Methods' , 'GET,POST,DELETE,OPTIONS')
+            response.headers.add('Acess-Control-Allow-Headers' , 'Content-type' , 'Authorization','true')
+            response.headers.add('Acess-Control-Allow-Methods' , 'GET,POST,PATCH,DELETE,OPTIONS')
             return response
 
 
@@ -198,7 +198,7 @@ def create_app(test_config=None):
   # Try using the word "title" to start. 
       # '''
         
-      @app.route('/questions/search',methods=['POST'])
+      @app.route('/questions/search',methods=['POST','GET'])
 
 
       def search_for_Question():
