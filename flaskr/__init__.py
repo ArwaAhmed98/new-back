@@ -12,7 +12,7 @@ QUESTIONS_PER_PAGE = 10
   #     '''
 def create_app(test_config=None):
       
-      
+      #any changes to commit again
       
       
           
@@ -212,7 +212,7 @@ def create_app(test_config=None):
                   abort(422) # WE ARE NOT ABLE TO PROCESS THE REQUEST
             else:
                   #Search in our database with the sent search term
-                  selection = Question.query.filter(Question.questions.ilike(f'%{search_term}%')).all()
+                  selection = Question.query.filter(Question.questions.ilike('%{}%'.f(search_term))).all()
                   if selection is None:
                         abort(404) #we did not find anything match this , 404 =>Not Found
                   else:      
